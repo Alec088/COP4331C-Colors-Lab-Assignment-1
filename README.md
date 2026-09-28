@@ -3,22 +3,23 @@
 The Colors Application allows you to log into user accounts and add colors to the accounts that are stored with them. It also allows for searching through the colors already added to the current user account that you are logged into.
 
 ## -- Technologies Used --
-- Digital Ocean
+- DigitalOcean
 - GoDaddy
 - PuTTY
 - MySQL
 - Swagger
+- FileZilla
 - LAMP Stack Folder: Files for API, Frontend, and Backend.
 
 ## -- Setup And Run Instructions --
 
 Step 1:
 
-Create a LAMP Stack server on Digital Ocean, then connect it using a domain name that can be gotten from domain services such as GoDaddy and set the DNS Host to be the Public IP Address of the server. Make sure to have it use a password instead of SSH to access the root of the server.
+Create a LAMP Stack server on DigitalOcean, then connect it using a domain name that can be gotten from domain services such as GoDaddy and set the DNS Host to be the Public IP Address of the server. Make sure to have it use a password instead of SSH to access the root of the server.
 
 Step 2:
 
-Connect to the Digital Ocean server by connecting to the server using PuTTY which just requires the Public IP Address of the server as well as the root username and password created along with the server.
+Connect to the DigitalOcean server by connecting to the server using PuTTY which just requires the Public IP Address of the server as well as the root username and password created along with the server.
 
 Step 3:
 
@@ -26,9 +27,9 @@ Using PuTTY after connecting to the server, upload each file from the "LAMP Stac
 
 Step 4:
 
-Continuing using PuTTY, upload each file from the "LAMP Stack" folder using the same file structure that the folder uses into the server using commands such as the "cd" and "put" commands. Make sure to change the server link located in the code.js file (LAMP Stack/public/js/code.js) where there is a urlBase constant at the top that has the server link. You can also change the  "LAMPAPI" in the link to the name of the "api" folder being used for the Application (in this case it is just "api").
+Continuing using PuTTY, upload each file from the "LAMP Stack" folder using the same file structure that the folder uses into the server using commands such as the "cd" and "put" commands (you can also use FileZilla to upload files quicker by going to "File" and then "Site Manager..." and creating the site with the root username and password, then make sure to go to the html folder at "/var/www/html" before uploading there). Make sure to change the server link located in the code.js file (LAMP Stack/public/js/code.js) where there is a urlBase constant at the top that has the server link. You can also change the  "LAMPAPI" in the link to the name of the "api" folder being used for the Application (in this case it is just "api").
 
-Now you can connect to MySQL on the Digital Ocean server by using the command "mysql -u root -p" and entering the password again to connect to MySQL. Now the database will be created by using the commands in this exact order:
+Now you can connect to MySQL on the DigitalOcean server by using the command "mysql -u root -p" and entering the password again to connect to MySQL. Now the database will be created by using the commands in this exact order:
 ```
 create database COP4331;
 use COP4331;
