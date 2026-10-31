@@ -1,0 +1,55 @@
+@startuml usecase
+!pragma layout smetana
+title Colors Web Application - Use Case Diagram
+
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "User" as User
+actor "MySQL Database\n(COP4331)" as DB <<system>>
+
+rectangle "Colors Web Application (LAMP Stack)" {
+  usecase "Log In" as UC_Login
+  usecase "Save Session Cookie\n(20 min expiry)" as UC_Save
+  usecase "View Colors Page" as UC_View
+  usecase "Validate Session\n(read cookie)" as UC_Validate
+  usecase "Search Colors" as UC_Search
+  usecase "Add Color" as UC_Add
+  usecase "Log Out" as UC_Logout
+  usecase "Show Login Error" as UC_LoginErr
+}
+
+User --> UC_Login
+User --> UC_View
+User --> UC_Search
+User --> UC_Add
+User --> UC_Logout
+
+UC_Login ..> UC_Save : <<include>>
+UC_LoginErr ..> UC_Login : <<extend>>\n[invalid login/password]
+UC_View ..> UC_Validate : <<include>>
+UC_Search ..> UC_View : <<include>>
+UC_Add ..> UC_View : <<include>>
+
+UC_Login --> DB
+UC_Search --> DB
+UC_Add --> DB
+
+note left of UC_Search
+  Partial, case-insensitive match
+  (Name LIKE '%search%')
+  limited to the logged-in user's colors.
+end note
+
+note right of UC_Validate
+  If no valid userId is found in
+  the cookie, the user is redirected
+  back to index.html (login page).
+end note
+
+note right of UC_Login
+  There is no registration use case:
+  accounts are inserted directly
+  into the Users table by an admin.
+end note
+@enduml
