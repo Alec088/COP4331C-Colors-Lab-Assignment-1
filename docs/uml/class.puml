@@ -1,0 +1,190 @@
+@startuml class
+!pragma layout smetana
+title Colors Web Application - Class Diagram
+
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "Frontend (public/)" {
+  class "index.html" as IndexPage <<page>> {
+    loginName : input[text]
+    loginPassword : input[password]
+    loginButton : button
+    loginResult : span
+  }
+
+  class "color.html" as ColorPage <<page>> {
+    userName : span
+    logoutButton : button
+    searchText : input[text]
+    searchColorButton : button
+    colorSearchResult : span
+    colorList : p
+    colorText : input[text]
+    addColorButton : button
+    colorAddResult : span
+  }
+
+  class "code.js" as CodeJS <<module>> {
+    + {static} urlBase : String = "http://alechayes.nathanmelloul.com/LAMPAPI"
+    + {static} extension : String = "php"
+    + userId : int = 0
+    + firstName : String = ""
+    + lastName : String = ""
+    --
+    + doLogin() : void
+    + saveCookie() : void
+    + readCookie() : void
+    + doLogout() : void
+    + addColor() : void
+    + searchColor() : void
+  }
+
+  class "md5.js" as MD5 <<library>> {
+    + md5(string) : String
+  }
+
+  class SessionCookie <<cookie>> {
+    firstName : String
+    lastName : String
+    userId : int
+    expires : Date = now + 20 min
+  }
+}
+
+package "Backend API (api/)" {
+  class "Login.php" as LoginPHP <<script>> {
+    - inData : array
+    - id : int
+    - firstName : String
+    - lastName : String
+    --
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj : String) : void
+    - returnWithError(err : String) : void
+    - returnWithInfo(firstName, lastName, id) : void
+  }
+
+  class "SearchColors.php" as SearchPHP <<script>> {
+    - inData : array
+    - searchResults : String
+    - searchCount : int
+    --
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj : String) : void
+    - returnWithError(err : String) : void
+    - returnWithInfo(searchResults : String) : void
+  }
+
+  class "AddColor.php" as AddPHP <<script>> {
+    - inData : array
+    - color : String
+    - userId : int
+    --
+    - getRequestInfo() : array
+    - sendResultInfoAsJson(obj : String) : void
+    - returnWithError(err : String) : void
+  }
+
+  class mysqli <<PHP built-in>> {
+    + connect_error : String
+    + prepare(query : String) : mysqli_stmt
+    + close() : bool
+  }
+}
+
+package "JSON Messages" {
+  class LoginRequest <<JSON>> {
+    login : String
+    password : String
+  }
+  class LoginResponse <<JSON>> {
+    id : int
+    firstName : String
+    lastName : String
+    error : String
+  }
+  class SearchRequest <<JSON>> {
+    search : String
+    userId : int
+  }
+  class SearchResponse <<JSON>> {
+    results : String[]
+    error : String
+  }
+  class AddColorRequest <<JSON>> {
+    color : String
+    userId : int
+  }
+  class AddColorResponse <<JSON>> {
+    error : String
+  }
+}
+
+package "Database (MySQL: COP4331)" {
+  entity Users <<table>> {
+    * ID : INT <<PK, auto_increment>>
+    --
+    FirstName : VARCHAR(50)
+    LastName : VARCHAR(50)
+    Login : VARCHAR(50)
+    Password : VARCHAR(50)
+  }
+
+  entity Colors <<table>> {
+    * ID : INT <<PK, auto_increment>>
+    --
+    Name : VARCHAR(50)
+    UserID : INT
+  }
+}
+
+' Pages load scripts
+IndexPage ..> CodeJS : <<loads>>\ndoLogin()
+IndexPage ..> MD5 : <<loads>>
+ColorPage ..> CodeJS : <<loads>>\nreadCookie(), doLogout(),\nsearchColor(), addColor()
+
+' Session handling
+CodeJS "1" --> "0..1" SessionCookie : saves / reads / expires
+
+' HTTP calls from the client
+CodeJS ..> LoginPHP : HTTP POST\n/Login.php
+CodeJS ..> SearchPHP : HTTP POST\n/SearchColors.php
+CodeJS ..> AddPHP : HTTP POST\n/AddColor.php
+
+' Message formats
+CodeJS ..> LoginRequest : sends
+CodeJS ..> SearchRequest : sends
+CodeJS ..> AddColorRequest : sends
+LoginPHP ..> LoginResponse : returns
+SearchPHP ..> SearchResponse : returns
+AddPHP ..> AddColorResponse : returns
+
+' Database access
+LoginPHP ..> mysqli : uses
+SearchPHP ..> mysqli : uses
+AddPHP ..> mysqli : uses
+LoginPHP ..> Users : SELECT
+SearchPHP ..> Colors : SELECT
+AddPHP ..> Colors : INSERT
+
+Users "1" -- "0..*" Colors : owns >
+
+note bottom of MD5
+  Loaded by index.html, but the
+  md5() hashing call in doLogin()
+  is commented out (plain-text passwords).
+end note
+
+note bottom of SearchResponse
+  When there are no matches, SearchColors.php
+  returns {id, firstName, lastName, error}
+  (the LoginResponse shape) instead.
+end note
+
+note bottom of Colors
+  Colors.UserID references Users.ID
+  logically; no FOREIGN KEY constraint
+  is declared in the schema.
+end note
+@enduml
