@@ -1,0 +1,29 @@
+{
+  "name": "cop4331c-colors-lab",
+  "version": "1.0.0",
+  "description": "Linting tooling for the Colors LAMP web app (Node.js is used only for linting)",
+  "scripts": {
+    "lint:html": "htmlhint \"LAMP Stack/public/**/*.html\"",
+    "lint:css": "stylelint \"LAMP Stack/public/**/*.css\"",
+    "lint:js": "eslint \"LAMP Stack/public/js\"",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alec088/COP4331C-Colors-Lab-Assignment-1.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Alec088/COP4331C-Colors-Lab-Assignment-1/issues"
+  },
+  "homepage": "https://github.com/Alec088/COP4331C-Colors-Lab-Assignment-1#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
+    "htmlhint": "^1.9.2",
+    "stylelint": "^18.0.0",
+    "stylelint-config-standard": "^41.0.0"
+  },
+  "private": true
+}
